@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Country Forecast Survey</title>
+<title>MSEI Forecast Survey</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -19,8 +19,6 @@
     --accent: #2D5A3D;
     --accent-light: #EAF2EC;
     --accent2: #C4543A;
-    --dot: #2D5A3D;
-    --ci: rgba(45, 90, 61, 0.15);
     --mono: 'DM Mono', monospace;
     --sans: 'DM Sans', sans-serif;
   }
@@ -34,37 +32,365 @@
     flex-direction: column;
   }
 
+  /* ── HEADER ── */
   header {
-    padding: 24px 40px;
+    padding: 18px 40px;
     border-bottom: 1px solid var(--border);
     display: flex;
-    align-items: baseline;
-    gap: 16px;
+    align-items: center;
+    justify-content: space-between;
     background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 100;
   }
 
   header h1 {
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 500;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--text);
   }
 
-  header span {
+  .step-indicators {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .step {
     font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .step.active {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .step.done {
+    color: var(--border);
+    text-decoration: line-through;
+  }
+
+  /* ── PAGE SYSTEM ── */
+  .page { display: none; flex: 1; }
+  .page.active { display: flex; }
+  .page.page-split.active { display: grid; }
+
+  /* Full-width centered pages */
+  .page-full {
+    flex-direction: column;
+    align-items: center;
+    padding: 72px 24px 96px;
+    min-height: calc(100vh - 57px);
+  }
+
+  .page-card {
+    width: 100%;
+    max-width: 620px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 48px 52px;
+  }
+
+  .page-card.wide {
+    max-width: 740px;
+  }
+
+  /* ── WELCOME PAGE ── */
+  #page-welcome {
+    justify-content: center;
+    background: var(--bg);
+  }
+
+  .welcome-card {
+    width: 100%;
+    max-width: 560px;
+    text-align: center;
+  }
+
+  .welcome-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 32px;
+  }
+
+  .welcome-card h2 {
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+
+  .welcome-card p {
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--muted);
+    margin-bottom: 48px;
+  }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 28px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ── FORM FIELDS ── */
+  .field-group { margin-bottom: 28px; }
+
+  .field-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .field-hint {
     font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+
+  input[type="text"],
+  input[type="email"] {
+    width: 100%;
+    padding: 10px 14px;
+    font-family: var(--sans);
+    font-size: 13px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  input[type="text"]:focus,
+  input[type="email"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-light);
+  }
+
+  /* ── CHECKBOXES ── */
+  .checkbox-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.12s, border-color 0.12s;
+    user-select: none;
+  }
+
+  .checkbox-item:hover { background: var(--bg); border-color: #C8C2B8; }
+  .checkbox-item.checked { background: var(--accent-light); border-color: var(--accent); }
+
+  .checkbox-item input[type="checkbox"] {
+    accent-color: var(--accent);
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .checkbox-item span {
+    font-size: 13px;
+    color: var(--text);
+  }
+
+  /* ── INTRO PAGE ── */
+  .intro-text {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .country-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 20px 0 28px;
+  }
+
+  .country-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--text);
+  }
+
+  /* ── STUDY DESCRIPTION ── */
+  .study-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .study-badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    background: var(--accent-light);
+    border: 1px solid #B8D9BE;
+    padding: 4px 11px;
+    border-radius: 20px;
+    letter-spacing: 0.06em;
+    flex-shrink: 0;
+  }
+
+  .study-meta h2 {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .study-summary {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--text);
+    margin-bottom: 24px;
+  }
+
+  /* Experiment design box */
+  .exp-box {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+
+  .exp-box-header {
+    padding: 10px 18px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
     color: var(--muted);
   }
 
-  .layout {
-    display: grid;
-    grid-template-columns: 420px 1fr;
-    flex: 1;
-    min-height: 0;
+  .exp-section {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
   }
 
-  /* ── LEFT PANEL ── */
+  .exp-section:last-child { border-bottom: none; }
+
+  .exp-section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .exp-section p {
+    font-size: 13px;
+    line-height: 1.75;
+    color: var(--text);
+  }
+
+  .exp-section p + p { margin-top: 10px; }
+
+  .outcome-scale {
+    margin-top: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.03em;
+  }
+
+  /* ── BUTTONS ── */
+  .btn {
+    padding: 12px 28px;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: background 0.15s, transform 0.1s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn:active { transform: scale(0.99); }
+
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #234830; }
+  .btn-primary:disabled { background: var(--muted); cursor: not-allowed; }
+
+  .btn-lg { padding: 14px 48px; font-size: 15px; }
+
+  .page-actions {
+    margin-top: 32px;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  /* ── TOAST ── */
+  .toast {
+    display: none;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    margin-bottom: 12px;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  .toast.success { display: block; background: var(--accent-light); color: var(--accent); border: 1px solid #B8D9BE; }
+  .toast.error   { display: block; background: #FDF0ED; color: var(--accent2); border: 1px solid #F2C2B4; }
+
+  /* ── ESTIMATES PAGE (split) ── */
+  #page-estimates { min-height: 0; }
+
+  #page-estimates.active {
+    grid-template-columns: 430px 1fr;
+    flex: 1;
+    height: calc(100vh - 57px);
+  }
+
   .form-panel {
     background: var(--surface);
     border-right: 1px solid var(--border);
@@ -78,72 +404,62 @@
     flex: 1;
   }
 
-  .section-label {
+  /* Column headers for estimate inputs */
+  .col-headers {
+    display: grid;
+    grid-template-columns: 1fr 94px 94px;
+    gap: 8px;
+    margin-bottom: 6px;
+    padding: 0 0 0 0;
+  }
+
+  .col-header {
     font-family: var(--mono);
     font-size: 10px;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--muted);
-    margin-bottom: 20px;
-  }
-
-  .question-block {
-    margin-bottom: 28px;
-  }
-
-  .question-block label {
-    display: block;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text);
-    margin-bottom: 4px;
-  }
-
-  .question-block .sublabel {
-    font-size: 12px;
-    color: var(--muted);
-    margin-bottom: 10px;
-    line-height: 1.5;
+    text-align: center;
   }
 
   .country-row {
     display: grid;
-    grid-template-columns: 1fr 120px;
+    grid-template-columns: 1fr 94px 94px;
     gap: 8px;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
   }
 
   .country-name {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 400;
     color: var(--text);
-    padding: 10px 12px;
+    padding: 9px 11px;
     background: var(--bg);
     border: 1px solid var(--border);
     border-radius: 6px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
+    white-space: nowrap;
+    overflow: hidden;
   }
 
-  .flag {
-    font-size: 16px;
-    line-height: 1;
-  }
+  .flag { font-size: 15px; line-height: 1; flex-shrink: 0; }
 
   input[type="number"] {
     width: 100%;
-    padding: 10px 12px;
+    padding: 9px 8px;
     font-family: var(--mono);
-    font-size: 13px;
+    font-size: 12px;
     border: 1px solid var(--border);
     border-radius: 6px;
     background: var(--surface);
     color: var(--text);
     outline: none;
-    transition: border-color 0.15s;
+    transition: border-color 0.15s, background 0.15s;
     -moz-appearance: textfield;
+    text-align: center;
   }
 
   input[type="number"]::-webkit-inner-spin-button,
@@ -159,62 +475,15 @@
     background: var(--accent-light);
   }
 
-  .range-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-top: 4px;
-  }
+  input.se-input { color: var(--muted); }
+  input.se-input.has-value { color: var(--text); }
 
-  .range-label {
-    font-size: 11px;
-    color: var(--muted);
-    margin-bottom: 4px;
-    font-family: var(--mono);
-  }
-
-  /* respondent info */
-  .info-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 8px;
-  }
-
-  .field-group { display: flex; flex-direction: column; gap: 4px; }
-  .field-group label { font-size: 12px; color: var(--muted); font-family: var(--mono); letter-spacing: 0.04em; }
-
-  input[type="text"], select {
-    padding: 9px 12px;
-    font-family: var(--sans);
-    font-size: 13px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    background: var(--surface);
-    color: var(--text);
-    outline: none;
-    transition: border-color 0.15s;
-  }
-
-  input[type="text"]:focus, select:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-light);
-  }
-
-  select { cursor: pointer; }
-
-  .divider {
-    height: 1px;
-    background: var(--border);
-    margin: 28px 0;
-  }
-
-  /* progress */
+  /* Progress bar */
   .progress-bar {
     height: 3px;
     background: var(--border);
     border-radius: 2px;
-    margin-bottom: 28px;
+    margin-bottom: 20px;
     overflow: hidden;
   }
 
@@ -225,9 +494,9 @@
     transition: width 0.3s ease;
   }
 
-  /* submit */
+  /* Submit area */
   .submit-area {
-    padding: 24px 36px;
+    padding: 20px 36px 24px;
     border-top: 1px solid var(--border);
     background: var(--surface);
   }
@@ -255,27 +524,7 @@
   .submit-btn:active { transform: scale(0.99); }
   .submit-btn:disabled { background: var(--muted); cursor: not-allowed; }
 
-  .submit-count {
-    margin-top: 10px;
-    text-align: center;
-    font-size: 12px;
-    color: var(--muted);
-    font-family: var(--mono);
-  }
-
-  .toast {
-    display: none;
-    padding: 10px 14px;
-    border-radius: 6px;
-    font-size: 13px;
-    margin-bottom: 12px;
-    font-weight: 500;
-  }
-
-  .toast.success { display: block; background: var(--accent-light); color: var(--accent); border: 1px solid #B8D9BE; }
-  .toast.error   { display: block; background: #FDF0ED; color: var(--accent2); border: 1px solid #F2C2B4; }
-
-  /* ── RIGHT PANEL ── */
+  /* ── PLOT PANEL ── */
   .plot-panel {
     padding: 40px 48px;
     display: flex;
@@ -283,15 +532,13 @@
     overflow-y: auto;
   }
 
-  .plot-header {
-    margin-bottom: 8px;
-  }
+  .plot-header { margin-bottom: 12px; }
 
   .plot-header h2 {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     color: var(--text);
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
   }
 
@@ -304,15 +551,15 @@
 
   .chart-container {
     flex: 1;
-    min-height: 400px;
-    max-height: 600px;
+    min-height: 360px;
+    max-height: 560px;
     position: relative;
   }
 
   .plot-legend {
     display: flex;
     gap: 20px;
-    margin-top: 20px;
+    margin-top: 16px;
     flex-wrap: wrap;
   }
 
@@ -328,15 +575,7 @@
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: var(--dot);
-  }
-
-  .legend-line {
-    width: 24px;
-    height: 2px;
-    background: var(--ci);
-    border: 1px solid var(--accent);
-    opacity: 0.5;
+    background: var(--accent);
   }
 
   .empty-state {
@@ -348,7 +587,7 @@
     text-align: center;
     color: var(--muted);
     gap: 12px;
-    min-height: 400px;
+    min-height: 360px;
   }
 
   .empty-icon {
@@ -364,53 +603,201 @@
 
   .empty-state p { font-size: 13px; line-height: 1.6; }
 
-  /* mobile */
-  @media (max-width: 860px) {
-    .layout { grid-template-columns: 1fr; }
+  /* ── MOBILE ── */
+  @media (max-width: 900px) {
+    #page-estimates.active { grid-template-columns: 1fr; height: auto; }
     .form-panel { border-right: none; border-bottom: 1px solid var(--border); }
     .plot-panel { padding: 32px 24px; }
-    header { padding: 16px 24px; }
+    header { padding: 16px 20px; }
+    .step-indicators { display: none; }
+    .page-card { padding: 32px 24px; }
+    .country-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Country Estimates Survey</h1>
-  <span>// Live preview enabled</span>
+  <h1>MSEI Forecast Survey</h1>
+  <div class="step-indicators" id="step-indicators">
+    <span class="step" id="step-1">01 &nbsp;Info</span>
+    <span class="step" id="step-2">02 &nbsp;Overview</span>
+    <span class="step" id="step-3">03 &nbsp;Study 1</span>
+    <span class="step" id="step-4">04 &nbsp;Estimates</span>
+  </div>
 </header>
 
-<div class="layout">
+<!-- ══════════════════════════════════════════════
+     PAGE 0 — WELCOME
+══════════════════════════════════════════════ -->
+<div id="page-welcome" class="page page-full active">
+  <div class="welcome-card">
+    <div class="welcome-eyebrow">MSEI Initiative · Expert Forecast Survey</div>
+    <h2>Thanks for taking part in reviewing the proposals for the MSEI initiative.</h2>
+    <p>Your forecasts will help us learn how expert expectations about cross-country heterogeneity line up with the observed results.</p>
+    <button class="btn btn-primary btn-lg" onclick="goTo('page-info')">
+      Proceed
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
 
-  <!-- ── FORM PANEL ── -->
-  <div class="form-panel">
-    <div class="form-inner">
+<!-- ══════════════════════════════════════════════
+     PAGE 1 — RESPONDENT INFO
+══════════════════════════════════════════════ -->
+<div id="page-info" class="page page-full">
+  <div class="page-card">
+    <div class="section-label">01 — Your Information</div>
 
-      <div class="section-label">01 — Respondent Info</div>
+    <div class="field-group">
+      <label class="field-label" for="resp-name">Full Name</label>
+      <div class="field-hint">Please provide your full name.</div>
+      <input type="text" id="resp-name" placeholder="e.g. Jane Smith" autocomplete="name">
+    </div>
 
-      <div class="info-grid">
-        <div class="field-group">
-          <label>Name / ID</label>
-          <input type="text" id="resp-name" placeholder="Optional">
-        </div>
-        <div class="field-group">
-          <label>Expertise</label>
-          <select id="resp-expertise">
-            <option value="">Select…</option>
-            <option>Academic</option>
-            <option>Policy</option>
-            <option>Industry</option>
-            <option>Other</option>
-          </select>
-        </div>
+    <div class="field-group">
+      <label class="field-label" for="resp-email">Email Address</label>
+      <div class="field-hint">Please provide your email address.</div>
+      <input type="email" id="resp-email" placeholder="e.g. jane@university.edu" autocomplete="email">
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Field of Expertise or Research</label>
+      <div class="field-hint">What is your field of expertise or research? Select all that apply.</div>
+      <div class="checkbox-grid">
+        <label class="checkbox-item"><input type="checkbox" name="subfield" value="American Politics" onchange="syncCheck(this)"><span>American Politics</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="subfield" value="Comparative Politics" onchange="syncCheck(this)"><span>Comparative Politics</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="subfield" value="International Relations" onchange="syncCheck(this)"><span>International Relations</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="subfield" value="Political Theory" onchange="syncCheck(this)"><span>Political Theory</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="subfield" value="Political Methodology" onchange="syncCheck(this)"><span>Political Methodology</span></label>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Primary Research Method</label>
+      <div class="field-hint">What is your primary research method? Select all that apply.</div>
+      <div class="checkbox-grid">
+        <label class="checkbox-item"><input type="checkbox" name="method" value="Qualitative" onchange="syncCheck(this)"><span>Qualitative</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="method" value="Observational" onchange="syncCheck(this)"><span>Observational</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="method" value="Experimental – Field" onchange="syncCheck(this)"><span>Experimental — Field</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="method" value="Experimental – Survey" onchange="syncCheck(this)"><span>Experimental — Survey</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="method" value="Experimental – Lab" onchange="syncCheck(this)"><span>Experimental — Lab</span></label>
+      </div>
+    </div>
+
+    <div class="toast" id="toast-info"></div>
+    <div class="page-actions">
+      <button class="btn btn-primary" onclick="validateInfo()">
+        Next
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PAGE 2 — STUDY OVERVIEW
+══════════════════════════════════════════════ -->
+<div id="page-intro" class="page page-full">
+  <div class="page-card">
+    <div class="section-label">02 — Study Overview</div>
+
+    <p class="intro-text">
+      The MSEI initiative has selected 10 survey experiments that will be launched online in the following 10 countries:
+    </p>
+
+    <div class="country-grid">
+      <div class="country-pill"><span>🇺🇸</span> United States</div>
+      <div class="country-pill"><span>🇩🇪</span> Germany</div>
+      <div class="country-pill"><span>🇯🇵</span> Japan</div>
+      <div class="country-pill"><span>🇧🇷</span> Brazil</div>
+      <div class="country-pill"><span>🇮🇳</span> India</div>
+      <div class="country-pill"><span>🇳🇬</span> Nigeria</div>
+      <div class="country-pill"><span>🇦🇺</span> Australia</div>
+    </div>
+
+    <p class="intro-text">
+      We will survey <strong>1,000 respondents</strong> from each country. We are interested in your predictions about the average treatment effects of these 10 experimental studies. Specifically, for each study, we'd like you to review the research design and forecast the average treatment effect.
+    </p>
+
+    <div class="page-actions">
+      <button class="btn btn-primary" onclick="goTo('page-study1')">
+        View Study 1
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PAGE 3 — STUDY 1 DESCRIPTION
+══════════════════════════════════════════════ -->
+<div id="page-study1" class="page page-full">
+  <div class="page-card wide">
+    <div class="section-label">03 — Study 1 of 1</div>
+
+    <div class="study-meta">
+      <span class="study-badge">Study 01</span>
+      <h2>Leader Credibility &amp; Public Approval</h2>
+    </div>
+
+    <p class="study-summary">
+      Study 1 tests whether a country leader failing to follow through on a threat reduces public support for the leader, because the public could punish leaders either for revealing their belligerence or for inconsistency between their statements and behaviors. This experiment presents respondents with a hypothetical scenario regarding each country's relations with other countries around the world. After reviewing the text, respondents evaluate whether they approve or disapprove of the country leader on a 7-point scale.
+    </p>
+
+    <div class="exp-box">
+      <div class="exp-box-header">Experiment Design — US Version</div>
+
+      <div class="exp-section">
+        <div class="exp-section-label">Instructions</div>
+        <p>We will now present to you a hypothetical scenario regarding US relations with other countries around the world. You will read about a situation that many countries have faced in the past and will probably face again in the future. Different leaders have handled such situations in different ways. We will describe one approach that leaders have taken, and ask whether you approve or disapprove of the approach.</p>
+        <p>Imagine that a country sent its military to take over some of its neighbor's territory.</p>
       </div>
 
-      <div class="divider"></div>
-      <div class="section-label">02 — Country Estimates</div>
+      <div class="exp-section">
+        <div class="exp-section-label">Control Condition</div>
+        <p>The US's country leader announced that the US would stay out of the conflict. The attacking country continued to invade and the conflict ended with the attacking country taking control of 20% of the contested territory.</p>
+      </div>
 
-      <div class="question-block">
-        <label>Your estimate for each country</label>
-        <div class="sublabel">Enter a value (e.g. percentage, score, or rate). Optionally add a confidence range below each estimate.</div>
+      <div class="exp-section">
+        <div class="exp-section-label">Treatment Condition</div>
+        <p>The US's country leader announced that if the attacking country continued to invade, the US military would immediately engage and attempt to push out the attacking country. The US sent troops to the region. The attacking country continued to invade. The US ordered the US military not to engage. The attacking country continued to invade and the conflict ended with the attacking country taking control of 20% of the contested territory.</p>
+      </div>
+
+      <div class="exp-section">
+        <div class="exp-section-label">Outcome Measure</div>
+        <p>How much would you approve or disapprove of the way the US's country leader handled the situation?</p>
+        <p class="outcome-scale">1 = definitely disapprove &nbsp;·&nbsp; 7 = definitely approve</p>
+      </div>
+    </div>
+
+    <div class="page-actions">
+      <button class="btn btn-primary" onclick="goTo('page-estimates')">
+        Enter Estimates
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PAGE 4 — ESTIMATES + CHART
+══════════════════════════════════════════════ -->
+<div id="page-estimates" class="page page-split">
+
+  <!-- FORM PANEL -->
+  <div class="form-panel">
+    <div class="form-inner">
+      <div class="section-label">04 — Country Estimates · Study 1</div>
+
+      <p style="font-size:12px;line-height:1.65;color:var(--muted);margin-bottom:20px;">
+        For each country, enter your forecasted <strong style="color:var(--text)">ATE</strong> on the 1–7 approval scale and your estimated <strong style="color:var(--text)">standard error</strong>. The chart will display 95% CIs (estimate ± 1.96 × SE) in real time.
+      </p>
+
+      <div class="col-headers">
+        <div></div>
+        <div class="col-header">ATE</div>
+        <div class="col-header">Std. Error</div>
       </div>
 
       <div class="progress-bar">
@@ -418,36 +805,22 @@
       </div>
 
       <div id="country-inputs"></div>
-
-      <div class="divider"></div>
-      <div class="section-label">03 — Additional Context</div>
-
-      <div class="question-block">
-        <label>Notes or reasoning</label>
-        <div class="sublabel">Optional: briefly explain your estimates.</div>
-        <textarea id="notes" rows="3"
-          style="width:100%;padding:10px 12px;font-family:var(--sans);font-size:13px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);outline:none;resize:vertical;transition:border-color 0.15s;"
-          onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"
-          placeholder="e.g. Based on 2022 data…"></textarea>
-      </div>
-
     </div>
 
     <div class="submit-area">
-      <div class="toast" id="toast"></div>
+      <div class="toast" id="toast-submit"></div>
       <button class="submit-btn" id="submit-btn" onclick="submitSurvey()">
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2L15 22 11 13 2 9l20-7z"/></svg>
-        Submit to Google Sheets
+        Submit Response
       </button>
-      <div class="submit-count" id="submit-count"></div>
     </div>
   </div>
 
-  <!-- ── PLOT PANEL ── -->
+  <!-- PLOT PANEL -->
   <div class="plot-panel">
     <div class="plot-header">
-      <h2>Coefficient Plot — Live Preview</h2>
-      <p id="plot-subtitle">Enter values on the left to see them plotted in real time</p>
+      <h2>Coefficient Plot — Study 1</h2>
+      <p id="plot-subtitle">Enter estimates on the left to see them plotted in real time</p>
     </div>
 
     <div id="empty-state" class="empty-state">
@@ -462,11 +835,11 @@
     <div class="plot-legend" id="plot-legend" style="display:none">
       <div class="legend-item">
         <div class="legend-dot"></div>
-        <span>Point estimate</span>
+        <span>Point estimate (ATE)</span>
       </div>
       <div class="legend-item">
-        <div style="width:28px;height:3px;background:var(--accent);opacity:0.3;border-radius:2px"></div>
-        <span>Confidence interval (if provided)</span>
+        <div style="width:28px;height:3px;background:var(--accent);opacity:0.35;border-radius:2px"></div>
+        <span>95% CI (estimate ± 1.96 × SE)</span>
       </div>
     </div>
   </div>
@@ -474,11 +847,9 @@
 </div>
 
 <script>
-// ─── CONFIGURATION ───────────────────────────────────────────────
-// STEP 1: Replace this URL with your Google Apps Script Web App URL
+// ─── CONFIGURATION ────────────────────────────────────────────────
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxrWZfRB1Al7gtYjQRs4-_5rCqxOZWFpYl1Q55xkG3Ma7oikavPZk5miDhm7n7S34vchw/exec";
 
-// STEP 2: Customize your countries and the metric you're measuring
 const COUNTRIES = [
   { name: "United States", flag: "🇺🇸", id: "us" },
   { name: "Germany",       flag: "🇩🇪", id: "de" },
@@ -489,70 +860,102 @@ const COUNTRIES = [
   { name: "Australia",     flag: "🇦🇺", id: "au" },
 ];
 
-const METRIC_LABEL = "Estimate (%)"; // ← change this label to match your question
+const Z95 = 1.96;
 
-// ─── BUILD FORM ───────────────────────────────────────────────────
+// ─── PAGE NAVIGATION ──────────────────────────────────────────────
+const STEP_PAGES = ["page-info", "page-intro", "page-study1", "page-estimates"];
+
+function goTo(pageId) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById(pageId).classList.add("active");
+  updateSteps(pageId);
+  window.scrollTo(0, 0);
+}
+
+function updateSteps(pageId) {
+  const idx = STEP_PAGES.indexOf(pageId);
+  document.getElementById("step-indicators").style.visibility =
+    pageId === "page-welcome" ? "hidden" : "visible";
+  document.querySelectorAll(".step").forEach((s, i) => {
+    s.classList.remove("active", "done");
+    if (idx === -1) return;
+    if (i < idx) s.classList.add("done");
+    else if (i === idx) s.classList.add("active");
+  });
+}
+
+// ─── CHECKBOX SYNC ────────────────────────────────────────────────
+function syncCheck(cb) {
+  cb.closest(".checkbox-item").classList.toggle("checked", cb.checked);
+}
+
+// ─── VALIDATION: INFO PAGE ────────────────────────────────────────
+function validateInfo() {
+  const name    = document.getElementById("resp-name").value.trim();
+  const email   = document.getElementById("resp-email").value.trim();
+  const hasSub  = document.querySelectorAll('input[name="subfield"]:checked').length > 0;
+  const hasMeth = document.querySelectorAll('input[name="method"]:checked').length > 0;
+  const toast   = document.getElementById("toast-info");
+
+  if (!name) {
+    showToast(toast, "error", "Please enter your full name.");
+    return;
+  }
+  if (!email || !email.includes("@")) {
+    showToast(toast, "error", "Please enter a valid email address.");
+    return;
+  }
+  if (!hasSub) {
+    showToast(toast, "error", "Please select at least one field of expertise.");
+    return;
+  }
+  if (!hasMeth) {
+    showToast(toast, "error", "Please select at least one research method.");
+    return;
+  }
+
+  toast.className = "toast";
+  goTo("page-intro");
+}
+
+function showToast(el, type, msg) {
+  el.className = "toast " + type;
+  el.textContent = msg;
+  el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+// ─── BUILD ESTIMATE FORM ──────────────────────────────────────────
 const container = document.getElementById("country-inputs");
-
 COUNTRIES.forEach(c => {
   const wrap = document.createElement("div");
-  wrap.style.marginBottom = "16px";
   wrap.innerHTML = `
     <div class="country-row">
       <div class="country-name"><span class="flag">${c.flag}</span>${c.name}</div>
-      <input type="number" id="val-${c.id}" placeholder="—"
-             step="any"
-             oninput="handleInput(this, '${c.id}')"
-             onchange="handleInput(this, '${c.id}')">
-    </div>
-    <div class="range-row" style="margin-left:0">
-      <div>
-        <div class="range-label">Lower CI</div>
-        <input type="number" id="lo-${c.id}" placeholder="optional" step="any"
-               oninput="updateChart()" style="font-size:12px;padding:7px 10px">
-      </div>
-      <div>
-        <div class="range-label">Upper CI</div>
-        <input type="number" id="hi-${c.id}" placeholder="optional" step="any"
-               oninput="updateChart()" style="font-size:12px;padding:7px 10px">
-      </div>
-    </div>
-  `;
+      <input type="number" id="val-${c.id}" placeholder="—" step="any"
+             oninput="handleInput(this,'${c.id}')" onchange="handleInput(this,'${c.id}')">
+      <input type="number" id="se-${c.id}"  placeholder="—" step="any" class="se-input"
+             oninput="handleSE(this); updateChart()" onchange="handleSE(this); updateChart()">
+    </div>`;
   container.appendChild(wrap);
 });
 
-// ─── CHART SETUP ─────────────────────────────────────────────────
+// ─── CHART ────────────────────────────────────────────────────────
 let chart = null;
 
-function buildChart(labels, points, lo, hi) {
+function buildChart(labels, points, los, his) {
   const ctx = document.getElementById("coefChart").getContext("2d");
+  if (chart) { chart.destroy(); chart = null; }
 
   const accentRGB = "45, 90, 61";
-
-  const data = labels.map((label, i) => ({
-    x: points[i],
-    y: i,
-    lo: lo[i],
-    hi: hi[i],
-  }));
-
-  if (chart) { chart.destroy(); chart = null; }
+  const plotData = labels.map((_, i) => ({ x: points[i], y: i, lo: los[i], hi: his[i] }));
 
   chart = new Chart(ctx, {
     type: "scatter",
     data: {
       datasets: [
-        // CI bars (drawn as fat transparent lines via custom plugin)
-        {
-          label: "CI",
-          data: data.filter(d => d.lo !== null && d.hi !== null),
-          pointRadius: 0,
-          showLine: false,
-        },
-        // Point estimates
         {
           label: "Estimate",
-          data: data.map(d => ({ x: d.x, y: d.y })),
+          data: plotData.map(d => ({ x: d.x, y: d.y })),
           pointRadius: 7,
           pointHoverRadius: 9,
           pointBackgroundColor: `rgba(${accentRGB}, 1)`,
@@ -566,13 +969,13 @@ function buildChart(labels, points, lo, hi) {
       indexAxis: "y",
       responsive: true,
       maintainAspectRatio: false,
-      animation: { duration: 200 },
-      layout: { padding: { right: 20 } },
+      animation: { duration: 180 },
+      layout: { padding: { right: 24, top: 8 } },
       scales: {
         x: {
           title: {
             display: true,
-            text: METRIC_LABEL,
+            text: "Average Treatment Effect (1–7 approval scale)",
             color: "#8A857C",
             font: { family: "'DM Mono', monospace", size: 11 },
           },
@@ -586,7 +989,7 @@ function buildChart(labels, points, lo, hi) {
           reverse: false,
           ticks: {
             stepSize: 1,
-            callback: (val) => labels[Math.round(val)] || "",
+            callback: val => labels[Math.round(val)] ?? "",
             color: "#1A1814",
             font: { family: "'DM Sans', sans-serif", size: 13 },
           },
@@ -597,45 +1000,58 @@ function buildChart(labels, points, lo, hi) {
         legend: { display: false },
         tooltip: {
           callbacks: {
-            label: (ctx) => {
-              const raw = ctx.raw;
-              const country = labels[Math.round(raw.y)];
-              return `${country}: ${raw.x}`;
+            label: ctx => {
+              const d = plotData[Math.round(ctx.raw.y)];
+              const country = labels[Math.round(ctx.raw.y)];
+              const lines = [`${country}:  ATE = ${ctx.raw.x.toFixed(3)}`];
+              if (d && d.lo !== null && d.hi !== null) {
+                lines.push(`95% CI: [${d.lo.toFixed(3)}, ${d.hi.toFixed(3)}]`);
+              }
+              return lines;
             },
           },
           backgroundColor: "#1A1814",
           titleFont: { family: "'DM Sans', sans-serif" },
-          bodyFont: { family: "'DM Mono', monospace" },
-          padding: 10,
+          bodyFont: { family: "'DM Mono', monospace", size: 12 },
+          padding: 12,
         },
       },
     },
     plugins: [
       {
+        id: "zeroLine",
+        afterDatasetsDraw(chart) {
+          const { ctx, scales, chartArea } = chart;
+          if (!scales.x) return;
+          const x0 = scales.x.getPixelForValue(0);
+          if (x0 < chartArea.left || x0 > chartArea.right) return;
+          ctx.save();
+          ctx.strokeStyle = "rgba(0,0,0,0.15)";
+          ctx.lineWidth = 1;
+          ctx.setLineDash([4, 4]);
+          ctx.beginPath();
+          ctx.moveTo(x0, chartArea.top);
+          ctx.lineTo(x0, chartArea.bottom);
+          ctx.stroke();
+          ctx.restore();
+        },
+      },
+      {
         id: "ciLines",
         afterDatasetsDraw(chart) {
           const { ctx, scales } = chart;
-          const xScale = scales.x;
-          const yScale = scales.y;
           ctx.save();
-          data.forEach((d, i) => {
+          plotData.forEach(d => {
             if (d.lo === null || d.hi === null) return;
-            const yPx = yScale.getPixelForValue(d.y);
-            const xLo = xScale.getPixelForValue(d.lo);
-            const xHi = xScale.getPixelForValue(d.hi);
-            ctx.strokeStyle = "rgba(45, 90, 61, 0.5)";
+            const yPx  = scales.y.getPixelForValue(d.y);
+            const xLo  = scales.x.getPixelForValue(d.lo);
+            const xHi  = scales.x.getPixelForValue(d.hi);
+            ctx.strokeStyle = "rgba(45, 90, 61, 0.55)";
             ctx.lineWidth = 3;
             ctx.lineCap = "round";
-            ctx.beginPath();
-            ctx.moveTo(xLo, yPx);
-            ctx.lineTo(xHi, yPx);
-            ctx.stroke();
-            // caps
+            ctx.beginPath(); ctx.moveTo(xLo, yPx); ctx.lineTo(xHi, yPx); ctx.stroke();
             [xLo, xHi].forEach(x => {
-              ctx.beginPath();
-              ctx.moveTo(x, yPx - 5);
-              ctx.lineTo(x, yPx + 5);
-              ctx.stroke();
+              ctx.beginPath(); ctx.moveTo(x, yPx - 5); ctx.lineTo(x, yPx + 5); ctx.stroke();
             });
           });
           ctx.restore();
@@ -652,96 +1068,88 @@ function handleInput(el, id) {
   updateChart();
 }
 
+function handleSE(el) {
+  el.classList.toggle("has-value", el.value !== "");
+}
+
 function updateProgress() {
   const filled = COUNTRIES.filter(c => document.getElementById(`val-${c.id}`).value !== "").length;
-  const pct = (filled / COUNTRIES.length) * 100;
-  document.getElementById("progress-fill").style.width = pct + "%";
+  document.getElementById("progress-fill").style.width = (filled / COUNTRIES.length * 100) + "%";
 }
 
 function updateChart() {
-  const labels = [];
-  const points = [];
-  const lo = [];
-  const hi = [];
-
+  const labels = [], points = [], los = [], his = [];
   let anyValue = false;
 
   COUNTRIES.forEach(c => {
     const val = parseFloat(document.getElementById(`val-${c.id}`).value);
-    const loVal = parseFloat(document.getElementById(`lo-${c.id}`).value);
-    const hiVal = parseFloat(document.getElementById(`hi-${c.id}`).value);
-
+    const se  = parseFloat(document.getElementById(`se-${c.id}`).value);
     if (!isNaN(val)) {
       anyValue = true;
       labels.push(c.name);
       points.push(val);
-      lo.push(isNaN(loVal) ? null : loVal);
-      hi.push(isNaN(hiVal) ? null : hiVal);
+      if (!isNaN(se) && se > 0) {
+        los.push(val - Z95 * se);
+        his.push(val + Z95 * se);
+      } else {
+        los.push(null);
+        his.push(null);
+      }
     }
   });
 
-  const empty = document.getElementById("empty-state");
-  const wrap  = document.getElementById("chart-wrap");
-  const legend = document.getElementById("plot-legend");
+  const empty    = document.getElementById("empty-state");
+  const wrap     = document.getElementById("chart-wrap");
+  const legend   = document.getElementById("plot-legend");
   const subtitle = document.getElementById("plot-subtitle");
 
   if (!anyValue) {
     empty.style.display = "flex";
-    wrap.style.display = "none";
+    wrap.style.display  = "none";
     legend.style.display = "none";
-    subtitle.textContent = "Enter values on the left to see them plotted in real time";
+    subtitle.textContent = "Enter estimates on the left to see them plotted in real time";
     if (chart) { chart.destroy(); chart = null; }
     return;
   }
 
-  empty.style.display = "none";
-  wrap.style.display = "block";
+  empty.style.display  = "none";
+  wrap.style.display   = "block";
   legend.style.display = "flex";
   subtitle.textContent = `Showing ${labels.length} of ${COUNTRIES.length} countries`;
-
-  buildChart(labels, points, lo, hi);
+  buildChart(labels, points, los, his);
 }
 
 // ─── SUBMISSION ───────────────────────────────────────────────────
 async function submitSurvey() {
-  const btn = document.getElementById("submit-btn");
-  const toast = document.getElementById("toast");
+  const btn   = document.getElementById("submit-btn");
+  const toast = document.getElementById("toast-submit");
   toast.className = "toast";
-  toast.textContent = "";
 
-  // Validate at least one estimate
   const anyFilled = COUNTRIES.some(c => document.getElementById(`val-${c.id}`).value !== "");
   if (!anyFilled) {
-    toast.className = "toast error";
-    toast.textContent = "Please enter at least one country estimate.";
+    showToast(toast, "error", "Please enter at least one country estimate before submitting.");
     return;
   }
 
   btn.disabled = true;
   btn.innerHTML = `<span style="opacity:0.7">Submitting…</span>`;
 
+  const subfields = [...document.querySelectorAll('input[name="subfield"]:checked')].map(el => el.value).join("; ");
+  const methods   = [...document.querySelectorAll('input[name="method"]:checked')].map(el => el.value).join("; ");
+
   const payload = {
-    timestamp: new Date().toISOString(),
-    respondent: document.getElementById("resp-name").value || "Anonymous",
-    expertise: document.getElementById("resp-expertise").value || "—",
-    notes: document.getElementById("notes").value,
+    timestamp:  new Date().toISOString(),
+    name:       document.getElementById("resp-name").value.trim() || "Anonymous",
+    email:      document.getElementById("resp-email").value.trim(),
+    subfields,
+    methods,
+    study: "Study 1 – Leader Credibility & Public Approval",
   };
 
   COUNTRIES.forEach(c => {
-    payload[`${c.id}_estimate`] = document.getElementById(`val-${c.id}`).value || "";
-    payload[`${c.id}_lo`]       = document.getElementById(`lo-${c.id}`).value || "";
-    payload[`${c.id}_hi`]       = document.getElementById(`hi-${c.id}`).value || "";
+    payload[`${c.id}_ate`] = document.getElementById(`val-${c.id}`).value || "";
+    payload[`${c.id}_se`]  = document.getElementById(`se-${c.id}`).value  || "";
   });
-
-  if (APPS_SCRIPT_URL === "YOUR_APPS_SCRIPT_URL_HERE") {
-    // Demo mode — simulate success
-    await new Promise(r => setTimeout(r, 800));
-    toast.className = "toast success";
-    toast.textContent = "✓ Demo mode: response would be saved to Google Sheets.";
-    btn.disabled = false;
-    btn.innerHTML = `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2L15 22 11 13 2 9l20-7z"/></svg> Submit to Google Sheets`;
-    return;
-  }
 
   try {
     await fetch(APPS_SCRIPT_URL, {
@@ -750,16 +1158,13 @@ async function submitSurvey() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
-    toast.className = "toast success";
-    toast.textContent = "✓ Response saved! Thank you.";
-    document.getElementById("submit-count").textContent = "Your response has been recorded.";
+    showToast(toast, "success", "✓ Response saved — thank you for your contribution!");
   } catch (err) {
-    toast.className = "toast error";
-    toast.textContent = "Connection error — please try again.";
+    showToast(toast, "error", "Connection error — please try again.");
   }
 
   btn.disabled = false;
-  btn.innerHTML = `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2L15 22 11 13 2 9l20-7z"/></svg> Submit to Google Sheets`;
+  btn.innerHTML = `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2L15 22 11 13 2 9l20-7z"/></svg> Submit Response`;
 }
 </script>
 </body>
