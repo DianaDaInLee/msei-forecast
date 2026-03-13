@@ -706,15 +706,7 @@
       The MSEI initiative has selected 10 survey experiments that will be launched online in the following 10 countries:
     </p>
 
-    <div class="country-grid">
-      <div class="country-pill"><span>🇺🇸</span> United States</div>
-      <div class="country-pill"><span>🇩🇪</span> Germany</div>
-      <div class="country-pill"><span>🇯🇵</span> Japan</div>
-      <div class="country-pill"><span>🇧🇷</span> Brazil</div>
-      <div class="country-pill"><span>🇮🇳</span> India</div>
-      <div class="country-pill"><span>🇳🇬</span> Nigeria</div>
-      <div class="country-pill"><span>🇦🇺</span> Australia</div>
-    </div>
+    <div class="country-grid" id="overview-country-grid"></div>
 
     <p class="intro-text">
       We will survey <strong>1,000 respondents</strong> from each country. We are interested in your predictions about the average treatment effects of these 10 experimental studies. Specifically, for each study, we'd like you to review the research design and forecast the average treatment effect.
@@ -926,6 +918,15 @@ function showToast(el, type, msg) {
   el.textContent = msg;
   el.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
+
+// ─── BUILD OVERVIEW COUNTRY LIST ─────────────────────────────────
+const overviewGrid = document.getElementById("overview-country-grid");
+COUNTRIES.forEach(c => {
+  const pill = document.createElement("div");
+  pill.className = "country-pill";
+  pill.innerHTML = `<span>${c.flag}</span> ${c.name}`;
+  overviewGrid.appendChild(pill);
+});
 
 // ─── BUILD ESTIMATE FORM ──────────────────────────────────────────
 const container = document.getElementById("country-inputs");
