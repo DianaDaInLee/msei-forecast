@@ -1078,7 +1078,7 @@ function updateProgress() {
 }
 
 function updateChart() {
-  const labels = [], points = [], los = [], his = [];
+  const entries = [];
   let anyValue = false;
 
   COUNTRIES.forEach(c => {
@@ -1086,17 +1086,22 @@ function updateChart() {
     const se  = parseFloat(document.getElementById(`se-${c.id}`).value);
     if (!isNaN(val)) {
       anyValue = true;
-      labels.push(c.name);
-      points.push(val);
-      if (!isNaN(se) && se > 0) {
-        los.push(val - Z95 * se);
-        his.push(val + Z95 * se);
-      } else {
-        los.push(null);
-        his.push(null);
-      }
+      entries.push({
+        label: c.name,
+        point: val,
+        lo: (!isNaN(se) && se > 0) ? val - Z95 * se : null,
+        hi: (!isNaN(se) && se > 0) ? val + Z95 * se : null,
+      });
     }
   });
+
+  // Sort ascending so highest estimate appears at top of chart (largest y-index)
+  entries.sort((a, b) => a.point - b.point);
+
+  const labels = entries.map(e => e.label);
+  const points = entries.map(e => e.point);
+  const los    = entries.map(e => e.lo);
+  const his    = entries.map(e => e.hi);
 
   const empty    = document.getElementById("empty-state");
   const wrap     = document.getElementById("chart-wrap");
